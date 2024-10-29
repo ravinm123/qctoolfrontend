@@ -1,21 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Dashboar.css';
-import { toast } from 'react-toastify';
+import { toast,ToastContainer } from 'react-toastify';
 
 const Dashboard = () => {
     const [showForm, setShowForm] = useState(false);
     const [taskFormVisible, setTaskFormVisible] = useState(false);
     const [teamFormVisible, setTeamFormVisible] = useState(false);
+    const [annotator, setannotator] =useState(false);
     const [pdata, setData] = useState({ project_name: '', project_Id: '' });
     const [tdata, setTData] = useState({ task_type: '', project: '' });
     const [team, setTeam] = useState({ team_name: '', lead_name: '' });
+
     const [projects, setProjects] = useState([]);
+    const [teams,setteams] =useState([]);
     const [errorMessage, setErrorMessage] = useState("");
 
     const handleOnChange = () => setShowForm(!showForm);
     const handleOnTaskTypeChange = () => setTaskFormVisible(!taskFormVisible);
     const handleOnTeamForm = () => setTeamFormVisible(!teamFormVisible);
+    const handleOnAnnotator =() => setannotator(!annotator)
 
     const handleProjectInputChange = (e) => setData({ ...pdata, [e.target.name]: e.target.value });
     const handleTaskInputChange = (e) => setTData({ ...tdata, [e.target.name]: e.target.value });
@@ -33,6 +37,22 @@ const Dashboard = () => {
         fetchProjects();
     }, []);
 
+    useEffect(()=>{
+        const fetchteam =async()=>{
+            try{
+                const response =await axios.get('http://127.0.0.1:8000/data/teamlist/')
+                setteams(response.data)
+
+                
+            }catch (error){
+                console.error('Error fetching teams')
+
+            }
+        }
+        fetchteam()
+
+    },[])
+
     const handleOnSubmit = async (e) => {
         e.preventDefault();
         setErrorMessage(""); // Reset error message
@@ -44,14 +64,14 @@ const Dashboard = () => {
         try {
             const response = await axios.post('http://127.0.0.1:8000/data/project_create/', pdata);
             console.log('Project added:', response.data);
-            toast.success('Project added successfully!', { position: toast.POSITION.TOP_CENTER });
+            toast.success('Project added successfully!');
             setData({ project_name: '', project_Id: '' });
             setProjects((prev) => [...prev, response.data]); // Add the new project
         } catch (error) {
             console.error('Failed to add project:', error);
             setErrorMessage('Failed to add project. Please try again.');
             if (error.response) {
-                toast.error(error.response.data.msg || 'Failed to add project. Please try again.', { position: toast.POSITION.TOP_CENTER });
+                toast.error(error.response.data.msg || 'Failed to add project. Please try again.');
             }
         }
     };
@@ -68,16 +88,42 @@ const Dashboard = () => {
         try {
             const response = await axios.post('http://127.0.0.1:8000/data/task_create/', tdata);
             console.log('Task added:', response.data);
-            toast.success('Task added successfully!', { position: toast.POSITION.TOP_CENTER });
+            toast.success('Task added successfully!');
             setTData({ task_type: '', project: '' });
         } catch (error) {
             console.error('Failed to add task:', error);
             setErrorMessage('Failed to add task. Please try again.');
             if (error.response) {
-                toast.error(error.response.data.msg || 'Failed to add task. Please try again.', { position: toast.POSITION.TOP_CENTER });
+                toast.error(error.response.data.msg || 'Failed to add task. Please try again.');
             }
         }
     };
+
+    const handleonteam = async(e)=>{
+        e.preventDefault();
+        setErrorMessage('');
+        if (!team.team_name || !team.lead_name)
+        {
+            setErrorMessage('team name and lead name please fill required')
+            return
+        }
+        try{
+            const response = await axios.post('http://127.0.0.1:8000/data/team_create/',team);
+            console.log('team',response.data)
+            toast.success('Team add sucessfully!')
+            setTeam({team_name:'',lead_name:''})
+        }
+        catch (error) {
+            console.error('Failed to add team:', error);
+            setErrorMessage('Failed to add team. Please try again.');
+            if (error.response) {
+                toast.error(error.response.data.msg || 'Failed to add task. Please try again.');
+            }
+        }
+    }
+    
+
+
 
     return (
         <div className="container">
@@ -187,7 +233,7 @@ const Dashboard = () => {
                 <button onClick={handleOnTeamForm}>ADD Team</button>
                 {teamFormVisible && (
                   <div className='teambox'>
-                    <form>
+                    <form onSubmit={handleonteam}>
                       <div>
                           <h2>Team</h2>
                           <label>Team Name</label>
@@ -211,7 +257,38 @@ const Dashboard = () => {
                     </form>
                   </div>
                 )}
+                <button onClick={handleOnAnnotator}>Add Annotator</button>
+                {annotator && (
+                    <div>
+                        <form>
+                            <select>
+                                <option value="" disabled>select team</option>
+                                {teams.map((team)=>(
+                                      <option key={team.team_id} value={team.team_id}>
+                                      {team.team_name}
+                                  </option>
+                                )
+
+                                )}
+                            </select>
+                            <br/>
+                            <lable>annotator name</lable>
+                        </form>
+                    </div>
+                )
+
+                }
             </main>
+            <ToastContainer 
+          className="toast-container" 
+          position="top-center" 
+          autoClose={1000} 
+          hideProgressBar={false} 
+          closeOnClick
+          pauseOnHover
+          draggable
+          theme="light" 
+        />
         </div>
     );
 };
