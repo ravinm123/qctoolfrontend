@@ -1,7 +1,7 @@
 
 
 
-body {
+/* body {
   margin: 0;
   font-size: 24px;
   font-family: 'Montserrat', sans-serif;
@@ -16,9 +16,9 @@ body {
   justify-content: center;
   align-items: center;background: url('https://t3.ftcdn.net/jpg/04/38/61/36/360_F_438613643_ErB3cBJ3eI38XbJE5cJZcOttEcTtfLik.jpg');
   background-size: cover;
-  background-position: center;
+  background-position: center; */
 
-}
+/* }
 .Sign-up-box{
   width: 400px;
   height: 620px;
@@ -31,26 +31,26 @@ body {
   padding: 10px;
   border-radius: 20px;
 
-}
+} */
 
 
-.wrapper {
+/* .wrapper {
   width: 100vw;
   height: 100vh;
   margin: auto;
   display: flex;
   /* justify-content: center; */
-  align-items: center;
+  /* align-items: center;
   background: url('https://t3.ftcdn.net/jpg/04/38/61/36/360_F_438613643_ErB3cBJ3eI38XbJE5cJZcOttEcTtfLik.jpg');
   background-size: cover;
   background-position: center;
-}
+} */
 
-@keyframes anim {
+/* @keyframes anim {
   100% {
     filter: hue-rotate(360deg);
   }
-}
+} 
 
 .login-box {
   width: 280px;
@@ -72,8 +72,8 @@ body {
 }
 
 h2 {
-  font-size: 1em;
-  color: #fff;
+  font-size: 1em; */
+  /* color: #fff;
   text-align: center;
   margin: 24px 0;
 }
@@ -90,7 +90,7 @@ h2 {
   color: #fff;
   font-size: .7em;
   margin-bottom: 20px; /* Adds space between label and input */
-  pointer-events: none;
+  /* pointer-events: none;
 }
 
 .input-box input:focus ~ label,
@@ -103,11 +103,11 @@ h2 {
 
 .input {
   background: transparent !important; /* Force transparency */
-  border: none; /* Remove border if needed */
-  outline: none; /* Remove default outline */
-}
+  /* border: none; Remove border if needed
+  outline: none; 
+} */
 
-.input-box input {
+/* .input-box input {  
   width: auto;
   height: 30px;
   background: transparent;
@@ -118,7 +118,7 @@ h2 {
   font-size: .7em;
   padding: 0 5px;
   color: white; /* This sets the text color to white */
-  margin-top: -5px;
+  /* margin-top: -5px;
 }
 
 
@@ -133,13 +133,13 @@ h2 {
 .remember-forgot label {
   display: flex;
   gap: 5px;
-}
+} */
 
-.remember-forgot input {
+/* .remember-forgot input {
   transform: scale(1.3);
-}
+} */
 
-button {
+/* button {
   width: 100px;
   height: 30px;
   border: none;
@@ -164,9 +164,9 @@ button:hover {
   color: #509125;
   text-align: center;
   margin-top: 20px;
-}
+} */
 
-.register-link a {
+/* .register-link a {
   color: rgb(52, 24, 212);
   text-decoration: none;
   font-weight: 600;
@@ -174,8 +174,8 @@ button:hover {
 
 .register-link a:hover {
   text-decoration: underline;
-}
+} */ 
 
 /* Import Montserrat font */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
-
+/* @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+ */

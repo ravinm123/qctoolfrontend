@@ -2,15 +2,16 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
-
+import { useNavigate } from 'react-router-dom';
+import './login.css';
+import myImage from './page/pic1.png';
 const Signin = () => {
   const [formdata, setFormdata] = useState({
     email: '',
     password: ''
   });
   
-  const navigate = useNavigate(); // Initialize useNavigate hook
+  const navigate = useNavigate();
 
   const handleOnChange = (e) => {
     setFormdata({ ...formdata, [e.target.name]: e.target.value });
@@ -32,7 +33,7 @@ const Signin = () => {
       console.log('Login successful! Token:', token);
       
       // Redirect to the dashboard after login
-      navigate('/dashboard'); // Ensure your route matches your routing setup
+      navigate('/dashboard');
     } catch (error) {
       if (error.response) {
         toast.error(error.response.data.message || 'Login failed.');
@@ -45,51 +46,63 @@ const Signin = () => {
 
   return (
     <div className='wrapper'>
-      <ToastContainer 
-        className="toast-container" 
-        position="top-center" 
-        autoClose={5000} 
-        hideProgressBar={false} 
-        closeOnClick
-        pauseOnHover
-        draggable
-        theme="light" 
-      />
+
+      <div className="image-container">
+        <img src={myImage} alt="Illustration" />
+      </div>
+
+
       <div className='login-box'>
+        <ToastContainer 
+          className="toast-container" 
+          position="top-center" 
+          autoClose={5000} 
+          hideProgressBar={false} 
+          closeOnClick
+          pauseOnHover
+          draggable
+          theme="light" 
+        />
+        <div class="logo">
+        <h1>ANMERKUNG</h1>
+        <p>SOLUTIONS</p>
+      </div>
+      <h2>Welcome To ASPL QC Tool</h2>
+      <p class="greeting">It's nice to see you again! 👋<br/>Log in to continue to your account.</p>
         <form onSubmit={handleSubmit}>
-          <h2>Login</h2>
+          
           <div className='input-box'>
-            <label>Email</label>
             <input
               type='text'
+              placeholder='User name'
               name='email'
               value={email}
               onChange={handleOnChange}
-              required // Add required for better UX
+             
             />
           </div>
           <div className='input-box'>
-            <label>Password</label>
             <input
               type='password'
+              placeholder='Password'
               name='password'
               value={password}
               onChange={handleOnChange}
-              required // Add required for better UX
+            
             />
+            
           </div>
-          <div className='remember-forgot'>
+          <div className='options'>
             <label>
               <input type='checkbox' /> Remember me
             </label>
+            <a href='/' className='forgot-password'>Forget password</a>
           </div>
           <button type='submit' disabled={!email || !password}>Login</button>
           <div className='register-link'>
-            {/* Uncomment and update if you have a registration route */}
-            {/* <p>Don't have an account?</p>
-            <a href='/register'>Register</a> */}
           </div>
         </form>
+        <footer>&copy;ASPL. All rights</footer>
       </div>
     </div>
   );
