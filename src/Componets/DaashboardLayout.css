@@ -1,0 +1,10 @@
+/* src/components/DashboardLayout.css */
+.dashboard-layout {
+    display: flex; /* Use flexbox for layout */
+}
+
+.content {
+    flex: 1; /* Allow the content area to grow */
+    margin-left: 250px; /* Leave space for the sidebar */
+    padding: 20px; /* Padding inside content area */
+}
