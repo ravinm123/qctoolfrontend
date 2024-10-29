@@ -19,30 +19,57 @@ const Signin = () => {
 
   const { email, password } = formdata;
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   try {
+  //     const response = await axios.post('http://127.0.0.1:8000/login/', {
+  //       email,
+  //       password
+  //     });
+
+  //     const { token } = response.data;
+  //     localStorage.setItem('access_token', token);
+  //     console.log('Login successful! Token:', token);
+      
+  //     // Redirect to the dashboard after login
+  //     navigate('/dashboard');
+  //   } catch (error) {
+  //     if (error.response) {
+  //       toast.error(error.response.data.message || 'Login failed.');
+  //     } else {
+  //       toast.error('An unexpected error occurred. Please try again later.');
+  //     }
+  //     console.error('Login error:', error);
+  //   }
+  // };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const response = await axios.post('http://127.0.0.1:8000/login/', {
-        email,
-        password
-      });
+     // Start loading state
 
-      const { token } = response.data;
-      localStorage.setItem('access_token', token);
-      console.log('Login successful! Token:', token);
-      
-      // Redirect to the dashboard after login
-      navigate('/dashboard');
+    try {
+        const response = await axios.post('http://127.0.0.1:8000/login/', {
+            email,
+            password
+        });
+
+        const { token } = response.data;
+        localStorage.setItem('access_token', token?.access_token);
+        console.log('Login successful! Token:',  token);
+        
+        // Redirect to the dashboard after login
+        navigate('/dashboard');
     } catch (error) {
-      if (error.response) {
-        toast.error(error.response.data.message || 'Login failed.');
-      } else {
-        toast.error('An unexpected error occurred. Please try again later.');
-      }
-      console.error('Login error:', error);
-    }
-  };
+        if (error.response) {
+            toast.error(error.response.data.message || 'Login failed.');
+        } else {
+            toast.error('An unexpected error occurred. Please try again later.');
+        }
+        console.error('Login error:', error);
+    } 
+};
+
 
   return (
     <div className='wrapper'>
