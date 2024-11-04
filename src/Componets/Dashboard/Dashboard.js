@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Dashboar.css';
 import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Dashboard = () => {
     const [showForm, setShowForm] = useState(false);
@@ -27,33 +28,74 @@ const Dashboard = () => {
     const handleTeamInputChange = (e) => setTeam({ ...team, [e.target.name]: e.target.value });
     const handleannotchange = (e) => setannot({ ...annot, [e.target.name]: e.target.value })
 
+    // useEffect(() => {
+    //     const fetchProjects = async () => {
+    //         try {
+    //             const response = await axios.get('http://127.0.0.1:8000/data/projectlist/');
+    //             setProjects(response.data);
+    //         } catch (error) {
+    //             console.error('Error fetching projects:', error);
+    //         }
+    //     };
+    //     fetchProjects();
+    // }, []);
+    // useEffect(() => {
+    //     const fetchProjects = async () => {
+    //         try {
+    //             const response = await axios.get('http://127.0.0.1:8000/data/projectlist/');
+                
+    //             // Add default values for `status` and `is_active`
+    //             const updatedProjects = response.data.map(project => ({
+    //                 ...project,
+    //                 status: project.status || 'inactive', // Set default status to 'inactive' if not provided
+    //                 is_active: project.is_active !== undefined ? project.is_active : false, // Default is_active to false
+    //             }));
+                
+    //             setProjects(updatedProjects);
+    //         } catch (error) {
+    //             console.error('Error fetching projects:', error);
+    //         }
+    //     };
+
+    //     fetchProjects();
+        
+    // }, []);
+
+    // useEffect(() => {
+    //     const fetchteam = async () => {
+    //         try {
+    //             const response = await axios.get('http://127.0.0.1:8000/data/teamlist/')
+    //             setteams(response.data)
+    //             console.log(response)
+
+    //         } catch (error) {
+    //             console.error('Error fetching teams')
+
+    //         }
+    //     }
+    //     fetchteam()
+
+    // }, [])
     useEffect(() => {
-        const fetchProjects = async () => {
+        const fetchProjectsAndTeams = async () => {
             try {
-                const response = await axios.get('http://127.0.0.1:8000/data/projectlist/');
-                setProjects(response.data);
+                const projectResponse = await axios.get('http://127.0.0.1:8000/data/projectlist/');
+                const teamResponse = await axios.get('http://127.0.0.1:8000/data/teamlist/');
+                setProjects(projectResponse.data);
+                setteams(teamResponse.data);
             } catch (error) {
-                console.error('Error fetching projects:', error);
+                console.error('Error fetching data:', error);
             }
         };
-        fetchProjects();
+    
+        // Initial fetch
+        fetchProjectsAndTeams();
+    
+        // Polling every 30 seconds
+        const interval = setInterval(fetchProjectsAndTeams, 30000); // 30 seconds
+        return () => clearInterval(interval); // Clear interval on component unmount
     }, []);
-
-    useEffect(() => {
-        const fetchteam = async () => {
-            try {
-                const response = await axios.get('http://127.0.0.1:8000/data/teamlist/')
-                setteams(response.data)
-                console.log(response)
-
-            } catch (error) {
-                console.error('Error fetching teams')
-
-            }
-        }
-        fetchteam()
-
-    }, [])
+    
 
     const handleOnSubmit = async (e) => {
         e.preventDefault();
@@ -87,10 +129,11 @@ const Dashboard = () => {
             setErrorMessage('Task name and project selection are required.');
             return;
         }
+console.log(projects)
 console.log(tdata)
 
         try {
-            const response = await axios.post('http://127.0.0.1:8000/data/task_create/', tdata);
+            const response = await axios.post('http://127.0.0.1:8000/data/type_create/', tdata);
             console.log('Task added:', response.data);
             toast.success('Task added successfully!');
             setTData({ task_type: '', project: '' });
@@ -133,6 +176,7 @@ console.log(tdata)
             return;
         }
 console.log(annot)
+
         try {
             const token = localStorage.getItem('access_token');
             console.log('Token:', token);
@@ -189,32 +233,36 @@ console.log(annot)
                     <h2>Qc Dashboard</h2>
                     <div className="search-add">
                         <input type="text" placeholder="Search" />
-                    </div>
+                    
 
                     <button onClick={handleOnChange} className="projectbutton">Add Project +</button>
 
                     {showForm && (
-                        <div className='project-box'>
+                        <div className='box'>
                             <form onSubmit={handleOnSubmit} className="projectadd">
                                 <div>
                                     <h2>Project</h2>
-                                    <label>Project Name</label>
+                                    
                                     <input
                                         type="text"
                                         name="project_name"
                                         value={pdata.project_name}
                                         onChange={handleProjectInputChange}
+                                        placeholder='Project_name'
                                         required
+                                       
                                     />
                                     <br />
-                                    <label>Project ID</label>
+                                    
                                     <input
                                         type="text"
                                         name="project_Id"
                                         value={pdata.project_Id}
                                         onChange={handleProjectInputChange}
-                                        required
+                                        placeholder='Project_id'
+                                      
                                     />
+                                    <br/>
                                     <button type="submit" disabled={!pdata.project_name || !pdata.project_Id}>
                                         Submit
                                     </button>
@@ -225,104 +273,142 @@ console.log(annot)
 
                     <button onClick={handleOnTaskTypeChange}>Add Task Type</button>
                     {taskFormVisible && (
-                        <div className='team-box'>
+                        <div className='box'>
                             <form onSubmit={handleTaskSubmit}>
                                 <div>
                                     <h2>Task Type</h2>
-                                    <label>Task Type</label>
                                     <input
                                         type="text"
                                         name="task_type" // Corrected name
                                         value={tdata.task_type}
                                         onChange={handleTaskInputChange}
-                                        required
+                                        placeholder='Task_type'
+                                  
                                     />
                                     <br />
-                                    <label>Project Name</label>
                                     <select
                                         name="project"
                                         value={tdata.project}
                                         onChange={handleTaskInputChange}
-                                        required
+                                       
+                                    
                                     >
                                         <option value="" disabled>Select Project</option>
                                         {projects.map((project) => (
-                                            <option key={project?.project_ID} value={project?.id}>
+                                            <option key={project?.project_name} value={project?.id}>
                                                 {project.project_name}
                                             </option>
                                          
                                         ))}
                                     </select>
+                                    <br/>
                                     <button type="submit" disabled={!tdata.task_type || !tdata.project}>Submit</button>
                                 </div>
                             </form>
                         </div>
                     )}
                     {errorMessage && <p className="error">{errorMessage}</p>}
-                </section>
-
-                <button onClick={handleOnTeamForm}>ADD Team</button>
-                {teamFormVisible && (
-                    <div className='teambox'>
+                    <button onClick={handleOnTeamForm}>ADD Team</button>
+                    {teamFormVisible && (
+                    <div className='box'>
                         <form onSubmit={handleonteam}>
                             <div>
                                 <h2>Team</h2>
-                                <label>Team Name</label>
+                                
                                 <input
                                     name="team_name"
                                     value={team.team_name}
                                     onChange={handleTeamInputChange}
-                                    required
+                                    placeholder='Team_name'
                                 />
-                                <br />
-                                <label>Lead Name</label>
+                                <br/>
+                                
                                 <input
                                     name="lead_name"
                                     value={team.lead_name}
                                     onChange={handleTeamInputChange} // Added onChange
-                                    required
+                                    placeholder='Lead_name'
                                 />
-                                <br />
+                                <br/>
                                 <button type='sumit' disabled={!team.team_name || !team.lead_name}>Submit </button>
                             </div>
                         </form>
                     </div>
-                )}
-                <button onClick={handleOnAnnotator}>Add Annotator</button>
-                {annotator && (
-                    <div>
+                    )}
+                    <button onClick={handleOnAnnotator}>Add Annotator</button>
+                    {annotator && (
+                    <div className='box'>
                         <form onSubmit={handleannotatorsubmit}>
+                            <h2>Team_user</h2>
                             <select
-                                name="team_name" // Changed from "project" to "team_name"
+                                name="team_name" 
                                 value={annot.team_name}
                                 onChange={handleannotchange}
                                 required
                             >
                                 <option value="" disabled>Select a team</option>
                                 {teams.map((team) => (
-                                    <option key={team?.team_id} value={team?.id}>
+                                    <option key={team?.id} value={team?.id}>
                                         {team.team_name}
                                     </option>
                                 ))}
                             </select>
-
-                            <br />
-                            <label>Annotator Name</label>
                             <input
                                 name="annotator_name"
                                 value={annot.annotator_name}
                                 onChange={handleannotchange}
-                                required
+                                placeholder='Annotator_name'
                             />
-                            <button
-                                type="submit"
-                                disabled={!annot.team_name || !annot.annotator_name} // Updated validation
-                            >
-                                Submit
-                            </button>
+                            <br/>
+                            <button type="submit"disabled={!annot.team_name || !annot.annotator_name}>Submit</button>
                         </form>
                     </div>
-                )}
+                    )}
+                <select>
+                    <option>Sort by</option>
+                </select>
+                <select>
+                    <option>
+                        Saved search
+                    </option>
+                </select>
+                </div>
+                <div className='table-container'>
+                    <table className='users-table'>
+                        <thead>
+                        <h2 className='list-users'>List components</h2>
+                            <tr>
+                               
+                                <th>Project</th>
+                                <th>Task_type</th>
+                                <th>Team</th>
+                                <th>Team_user</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                {/* Render projects data */}
+                                {projects.map((project) => (
+                                    <tr key={project.id}>
+                                        <td>{project.project_name}</td>
+                                        <td></td> {/* Empty cell for alignment */}
+                                    </tr>
+                                ))}
+                                {/* Render teams data */}
+                                {teams.map((team) => (
+                                    <tr key={team.id}>
+                                        <td></td> {/* Empty cell for alignment */}
+                                        <td>{team.team_name}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                    </table>
+                </div>
+
+                </section>
+
+                
+                
             </main>
             <ToastContainer
                 className="toast-container"
