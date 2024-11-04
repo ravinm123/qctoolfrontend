@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import './login.css';
 import myImage from './page/pic1.png';
+import mylog from './page/pic3.png';
+
 const Signin = () => {
   const [formdata, setFormdata] = useState({
     email: '',
@@ -19,35 +20,9 @@ const Signin = () => {
 
   const { email, password } = formdata;
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   try {
-  //     const response = await axios.post('http://127.0.0.1:8000/login/', {
-  //       email,
-  //       password
-  //     });
-
-  //     const { token } = response.data;
-  //     localStorage.setItem('access_token', token);
-  //     console.log('Login successful! Token:', token);
-      
-  //     // Redirect to the dashboard after login
-  //     navigate('/dashboard');
-  //   } catch (error) {
-  //     if (error.response) {
-  //       toast.error(error.response.data.message || 'Login failed.');
-  //     } else {
-  //       toast.error('An unexpected error occurred. Please try again later.');
-  //     }
-  //     console.error('Login error:', error);
-  //   }
-  // };
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-     // Start loading state
-
+    
     try {
         const response = await axios.post('http://127.0.0.1:8000/login/', {
             email,
@@ -58,7 +33,6 @@ const Signin = () => {
         localStorage.setItem('access_token', token?.access_token);
         console.log('Login successful! Token:',  token);
         
-        // Redirect to the dashboard after login
         navigate('/dashboard');
     } catch (error) {
         if (error.response) {
@@ -68,17 +42,13 @@ const Signin = () => {
         }
         console.error('Login error:', error);
     } 
-};
-
+  };
 
   return (
     <div className='wrapper'>
-
       <div className="image-container">
         <img src={myImage} alt="Illustration" />
       </div>
-
-
       <div className='login-box'>
         <ToastContainer 
           className="toast-container" 
@@ -90,14 +60,12 @@ const Signin = () => {
           draggable
           theme="light" 
         />
-        <div class="logo">
-        <h1>ANMERKUNG</h1>
-        <p>SOLUTIONS</p>
-      </div>
-      <h2>Welcome To ASPL QC Tool</h2>
-      <p class="greeting">It's nice to see you again! 👋<br/>Log in to continue to your account.</p>
+        <div className="logo">
+          <img src={mylog} alt='Logo' />
+        </div>
+        <h2>Welcome To ASPL QC Tool</h2>
+        <p className="greeting">It's nice to see you again! 👋<br/>Log in to continue to your account.</p>
         <form onSubmit={handleSubmit}>
-          
           <div className='input-box'>
             <input
               type='text'
@@ -105,19 +73,16 @@ const Signin = () => {
               name='email'
               value={email}
               onChange={handleOnChange}
-             
             />
           </div>
-          <div className='input-box'>
+          <div className='input-box-2'>
             <input
               type='password'
               placeholder='Password'
               name='password'
               value={password}
               onChange={handleOnChange}
-            
             />
-            
           </div>
           <div className='options'>
             <label>
@@ -126,8 +91,6 @@ const Signin = () => {
             <a href='/' className='forgot-password'>Forget password</a>
           </div>
           <button type='submit' disabled={!email || !password}>Login</button>
-          <div className='register-link'>
-          </div>
         </form>
         <footer>&copy;ASPL. All rights</footer>
       </div>

@@ -134,19 +134,82 @@ body {
     align-items: center;
     margin-bottom: 20px;
 }
-
-/* Style the input element */
-input[type="text"] {
-    width:49vw; /* Set the width of the input */
-    padding: 10px 10px 10px 40px; /* Add padding to leave space for the icon */
-    border: 1px solid #ccc; /* Optional: Style the border */
-    border-radius: 4px; /* Optional: Add rounded corners */
-    outline: none; /* Remove default outline */
-    /* background: url('icons8-search-50.png') no-repeat 10px center;  */
-    background-size: 20px 20px; /* Adjust the size of the icon */
-    border-radius: 5px;
-    margin-left: 10px;
+.dashboard section{
+  display: flex;
+  border-radius: 20px;
+  flex-direction: column;
 }
+.box form{
+  width: 200px;
+  height: 21%;
+  padding: 5px;
+  display: flex;
+  border: #4db4e4 solid 2px;
+  flex-direction: column;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+}
+.box form h2{
+ text-align: center;
+}
+.box form input{
+  width:9vw; 
+  padding: 10px 10px 10px 10px; 
+  border: 1px solid #ccc; 
+  border-radius: 4px; 
+  outline: none; 
+  background-size: 20px 20px; 
+  border-radius: 5px;
+  text-align: center;
+  align-items: center;
+  justify-items: center;
+  margin-bottom: 15px; 
+}
+.box{
+  background-color: #fff;
+}
+.box label{
+  font-size: 1rem;
+  align-items: center;
+  margin: 5px;
+  text-align: center;
+ 
+}
+.box select{
+  width:10.5vw; 
+  /* padding: 10px 10px 10px 10px;  */
+  padding: 10px;
+  border: 1px solid #ccc; 
+  border-radius: 4px; 
+  outline: none; 
+  background-size: 20px 20px; 
+  border-radius: 5px;
+  align-items: center;
+  justify-items: center;
+  margin-bottom: 9px;
+}
+
+.form button.login-button {
+    width: 5vw; /* Adjust width as needed */
+    padding: 10px; 
+    border: none; 
+    border-radius: 5px; 
+    background-color: #007bff; /* Use your preferred color */
+    color: white; 
+    font-size: 16px; 
+    cursor: pointer; 
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+.form button.login-button:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}
+
+  
+
+
+
 
 
 .search-add button {
