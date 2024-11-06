@@ -46,7 +46,8 @@ body {
   border: 1px solid #ccc;
   border-radius: 5px;
   outline: none;
-  margin-top: 20px; /* Keep margin only on the second input */
+  margin-top: 20px;
+
 }
 .input-box-2{
   width: 15vw;
@@ -54,7 +55,7 @@ body {
   border: 1px solid #ccc;
   border-radius: 5px;
   outline: none;
-  margin-top: 20px; /* Keep margin only on the second input */
+  margin-top: 20px; 
 }
 
 .logo {

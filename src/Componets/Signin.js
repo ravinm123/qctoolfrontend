@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import './login.css';
 import myImage from './page/pic1.png';
@@ -29,11 +30,28 @@ const Signin = () => {
             password
         });
 
-        const { token } = response.data;
+        const { token, user } = response.data;
+
+        // Store access and refresh tokens
         localStorage.setItem('access_token', token?.access_token);
-        console.log('Login successful! Token:',  token);
+        localStorage.setItem('refresh_token', token?.refresh_token);
+
+        // Store username and role in localStorage
+        localStorage.setItem('user', JSON.stringify({
+            username: user.username,
+            role: user.role // Store role as well
+        }));
+
+        // Show success toast message
+        toast.success('Login successful! Welcome back!');
+
+        console.log('Login successful! Token:', token, 'User:', user);
         
-        navigate('/dashboard');
+        // Delay navigation to allow the toast to be visible
+        setTimeout(() => {
+            navigate('/dashboard');
+        }, 2000); // Navigate after 3 seconds
+
     } catch (error) {
         if (error.response) {
             toast.error(error.response.data.message || 'Login failed.');
@@ -42,7 +60,8 @@ const Signin = () => {
         }
         console.error('Login error:', error);
     } 
-  };
+};
+
 
   return (
     <div className='wrapper'>
@@ -50,16 +69,6 @@ const Signin = () => {
         <img src={myImage} alt="Illustration" />
       </div>
       <div className='login-box'>
-        <ToastContainer 
-          className="toast-container" 
-          position="top-center" 
-          autoClose={5000} 
-          hideProgressBar={false} 
-          closeOnClick
-          pauseOnHover
-          draggable
-          theme="light" 
-        />
         <div className="logo">
           <img src={mylog} alt='Logo' />
         </div>
@@ -94,6 +103,16 @@ const Signin = () => {
         </form>
         <footer>&copy;ASPL. All rights</footer>
       </div>
+      <ToastContainer 
+          className="toast-container" 
+          position="top-center" 
+          autoClose={4000} 
+          hideProgressBar={false} 
+          closeOnClick
+          pauseOnHover
+          draggable
+          theme="light" 
+      />  
     </div>
   );
 };

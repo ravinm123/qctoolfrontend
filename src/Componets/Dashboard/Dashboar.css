@@ -127,12 +127,14 @@ body {
 .dashboard .table-container h2{
     color: black;
     margin-left: 0;
+    display: flex;
 }
-.search-add {
+.search-add  {
     display: flex;
     justify-content: space-around;
     align-items: center;
     margin-bottom: 20px;
+    flex-basis: 150px;
 }
 .dashboard section{
   display: flex;
