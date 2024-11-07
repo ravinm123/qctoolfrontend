@@ -4,6 +4,7 @@ import Signin from './Componets/Signin';
 import Dashboard from './Componets/Dashboard/Dashboard';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Sampleqc from './Componets/Sampleqc';
+import ProjectsTable from './Componets/Form';
 
 // import Ssv from './Componets/Ssv';
 
@@ -21,6 +22,7 @@ function App() {
         <Route path='/' element={<Signin/>}/>
         <Route path='/dashboard/' element={<Dashboard/>}/>
         <Route path='/sampleqc/' element={<Sampleqc/>}/>
+        <Route path='/form/' element={<ProjectsTable/>}/>
        
         </Routes>
       

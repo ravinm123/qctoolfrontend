@@ -17,6 +17,7 @@ const Dashboard = () => {
     const [projects, setProjects] = useState([]);
     const [teams, setteams] = useState([]);
     const [tasks, settasktypes] = useState([]);
+    const [annotators,setannotators] =useState([]);
     const [errorMessage, setErrorMessage] = useState("");
 
     const handleOnChange = () => setShowForm(!showForm);
@@ -31,6 +32,13 @@ const Dashboard = () => {
 
 
     const user = JSON.parse(localStorage.getItem("user"));
+    const [userRole, setUserRole] = useState('');
+    useEffect(() => {
+        if (user) {
+          setUserRole(user.role);  // Set the user role when the component mounts or user changes
+        }
+      }, [user]);
+ 
 
 
     // useEffect(() => {
@@ -87,9 +95,11 @@ const Dashboard = () => {
                 const projectResponse = await axios.get('http://127.0.0.1:8000/data/projectlist/');
                 const teamResponse = await axios.get('http://127.0.0.1:8000/data/teamlist/');
                 const taskResponse = await axios.get('http://127.0.0.1:8000/data/task_typelist/')
+                const teammemberResponse = await axios.get('http://127.0.0.1:8000/data/annotatorlist/')
                 setProjects(projectResponse.data);
                 setteams(teamResponse.data);
                 settasktypes(taskResponse.data)
+                setannotators(teammemberResponse.data)
 
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -100,12 +110,54 @@ const Dashboard = () => {
         fetchProjectsAndTeams();
 
         // Polling every 30 seconds
-        const interval = setInterval(fetchProjectsAndTeams, 30000); // 30 seconds
-        return () => clearInterval(interval); // Clear interval on component unmount
+        // const interval = setInterval(fetchProjectsAndTeams, 30000); // 30 seconds
+        // return () => clearInterval(interval); // Clear interval on component unmount
     }, []);
     // console.log(tasks)
     // console.log(projects)
     console.log(teams)
+
+   
+        const [editingRow, setEditingRow] = useState(null);
+        const [editData, setEditData] = useState({});
+    
+        const handleEditClick = (project) => {
+            setEditingRow(project.id);
+            setEditData({
+                project_name: project.project_name,
+                task_type: tasks.filter(ea => ea?.project === project?.id).map(eac => eac?.task_type).join(", "),
+                team: teams.map((team) => team.team_name).join(", "),
+                team_user: annotators.map((team) => team.annotator_name).join(", "),
+            });
+        };
+    
+        const handleSaveClick = () => {
+            console.log("Saved data:", editData); // Add logic to save data here
+            setEditingRow(null); // Exit edit mode after saving
+        };
+    
+        const handleChange = (field, value) => {
+            setEditData({
+                ...editData,
+                [field]: value,
+            });
+        };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     const handleOnSubmit = async (e) => {
         e.preventDefault();
@@ -116,16 +168,23 @@ const Dashboard = () => {
         }
 
         try {
-            const response = await axios.post('http://127.0.0.1:8000/data/project_create/', pdata);
+            const token = localStorage.getItem('access_token');
+            const response = await axios.post('http://127.0.0.1:8000/data/project_create/', pdata,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`, 
+                        'Content-Type': 'application/json', 
+                    }
+                }
+            );
             console.log('Project added:', response.data);
             toast.success('Project added successfully!');
             setData({ project_name: '', project_Id: '' });
             setProjects((prev) => [...prev, response.data]); // Add the new project
         } catch (error) {
-            console.error('Failed to add project:', error);
-            setErrorMessage('Failed to add project. Please try again.');
+            // setErrorMessage('Failed alread project is added');
             if (error.response) {
-                toast.error(error.response.data.msg || 'Failed to add project. Please try again.');
+                toast.error(error.response.data.msg || 'Failed already project is added. Please try again.');
             }
         }
     };
@@ -143,13 +202,20 @@ const Dashboard = () => {
         console.log(tdata)
 
         try {
-            const response = await axios.post('http://127.0.0.1:8000/data/type_create/', tdata);
+            const token = localStorage.getItem('access_token');
+            const response = await axios.post('http://127.0.0.1:8000/data/type_create/', tdata,{
+                    headers: {
+                        'Authorization': `Bearer ${token}`, 
+                        'Content-Type': 'application/json', 
+                    }
+                }
+            );
             console.log('Task added:', response.data);
             toast.success('Task added successfully!');
             setTData({ task_type: '', project: '' });
         } catch (error) {
-            console.error('Failed to add task:', error);
-            setErrorMessage('Failed to add task. Please try again.');
+            // console.error('Failed to add task:', error);
+            // setErrorMessage('Failed to add task. Please try again.');
             if (error.response) {
                 toast.error(error.response.data.msg || 'Failed to add task. Please try again.');
             }
@@ -170,10 +236,10 @@ const Dashboard = () => {
             setTeam({ team_name: '', lead_name: '' })
         }
         catch (error) {
-            console.error('Failed to add team:', error);
-            setErrorMessage('Failed to add team. Please try again.');
+            // console.error('Failed to add team:', error);
+            // setErrorMessage('Failed to add team. Please try again.');
             if (error.response) {
-                toast.error(error.response.data.msg || 'Failed to add task. Please try again.');
+                toast.error(error.response.data.msg || 'Failed already team added. Please try again.');
             }
         }
     }
@@ -244,9 +310,8 @@ const Dashboard = () => {
                     <div className="search-add">
                         <input type="text" placeholder="Search" />
 
-
-                        <button onClick={handleOnChange} className="projectbutton">Add Project +</button>
-
+                        {userRole === 'manager' && (
+                        <button onClick={handleOnChange} className="projectbutton">Add Project +</button>)}
                         {showForm && (
                             <div className='box'>
                                 <form onSubmit={handleOnSubmit} className="projectadd">
@@ -281,7 +346,8 @@ const Dashboard = () => {
                             </div>
                         )}
 
-                        <button onClick={handleOnTaskTypeChange}>Add Task Type</button>
+                        {userRole === 'manager' && (
+                        <button onClick={handleOnTaskTypeChange}>Add Task Type</button>)}
                         {taskFormVisible && (
                             <div className='box'>
                                 <form onSubmit={handleTaskSubmit}>
@@ -318,7 +384,9 @@ const Dashboard = () => {
                             </div>
                         )}
                         {errorMessage && <p className="error">{errorMessage}</p>}
-                        <button onClick={handleOnTeamForm}>ADD Team</button>
+
+                        {userRole === 'manager' && (
+                        <button onClick={handleOnTeamForm}>ADD Team</button>)}
                         {teamFormVisible && (
                             <div className='box'>
                                 <form onSubmit={handleonteam}>
@@ -345,7 +413,8 @@ const Dashboard = () => {
                                 </form>
                             </div>
                         )}
-                        <button onClick={handleOnAnnotator}>Add Annotator</button>
+                        {userRole === 'manager' && (
+                        <button onClick={handleOnAnnotator}>Add Annotator</button>)}
                         {annotator && (
                             <div className='box'>
                                 <form onSubmit={handleannotatorsubmit}>
@@ -397,23 +466,62 @@ const Dashboard = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {projects.map((project) => (
-                                    <tr key={project.id}>
-                                        <td>{project.project_name}</td>
-                                        <td>{tasks.filter(ea => ea?.project === project?.id).map(eac => eac?.task_type).join(", ")}</td>
-                                        <td>{teams.map((team)=>team.team_name).join(", ")}</td>
-                                    </tr>
-
-
-                                ))}
-                                {/* {tasks.map((task)=>
-                                <tr key={task.id}>
-                                    <td>{task.task_type}</td>
-                                </tr>
-                            )} */}
-
-
-                            </tbody>
+                    {projects.map((project) => (
+                        <tr key={project.id}>
+                            <td>
+                                {editingRow === project.id ? (
+                                    <input
+                                        type="text"
+                                        value={editData.project_name}
+                                        onChange={(e) => handleChange("project_name", e.target.value)}
+                                    />
+                                ) : (
+                                    project.project_name
+                                )}
+                            </td>
+                            <td>
+                                {editingRow === project.id ? (
+                                    <input
+                                        type="text"
+                                        value={editData.task_type}
+                                        onChange={(e) => handleChange("task_type", e.target.value)}
+                                    />
+                                ) : (
+                                    tasks.filter(ea => ea?.project === project?.id).map(eac => eac?.task_type).join(", ")
+                                )}
+                            </td>
+                            <td>
+                                {editingRow === project.id ? (
+                                    <input
+                                        type="text"
+                                        value={editData.team}
+                                        onChange={(e) => handleChange("team", e.target.value)}
+                                    />
+                                ) : (
+                                    teams.map((team) => team.team_name).join(", ")
+                                )}
+                            </td>
+                            <td>
+                                {editingRow === project.id ? (
+                                    <input
+                                        type="text"
+                                        value={editData.team_user}
+                                        onChange={(e) => handleChange("team_user", e.target.value)}
+                                    />
+                                ) : (
+                                    annotators.map((team) => team.annotator_name).join(", ")
+                                )}
+                            </td>
+                            <td>
+                                {editingRow === project.id ? (
+                                    <button onClick={handleSaveClick}>Save</button>
+                                ) : (
+                                    <button onClick={() => handleEditClick(project)}>✏️</button>
+                                )}
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
                         </table>
                     </div>
 
